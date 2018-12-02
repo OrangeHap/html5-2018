@@ -2,3 +2,16 @@
 page{
   background-color: #F8F8F8;
 }
+
+.fButt {
+  margin-top: 10%;
+}
+
+.butt {
+  width: 95%;
+  color: #ffffff;
+  background-color: #b0bafd;
+}
+.butt:active {
+   background-color: #919de7;
+}

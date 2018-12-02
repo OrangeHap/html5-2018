@@ -26,3 +26,4 @@
     <view class="weui-cell__ft">公众号：WeScholar</view>
   </view>
 </view>
+<button class='butt fButt' bindtap='toMailbox'>通过“小留言板”留言</button>

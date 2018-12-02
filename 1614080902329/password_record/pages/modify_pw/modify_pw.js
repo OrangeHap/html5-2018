@@ -13,6 +13,14 @@ Page({
   },
   //处理表单发送的数据
   formSubmit: function (res) {
+    // 加密函数 
+    function compile(code) {
+      let c = String.fromCharCode(code.charCodeAt(0) + code.length);
+      for (let i = 1; i < code.length; i++) {
+        c += String.fromCharCode(code.charCodeAt(i) + code.charCodeAt(i - 1));
+      }
+      return escape(c);
+    }
     let val = res.detail.value
 
     clearTimeout(this.closeTime)
@@ -35,7 +43,7 @@ Page({
     } else {
 
       //新增的内容
-      const fileSys = wx.getFileSystemManager()
+      // const fileSys = wx.getFileSystemManager()
       let json = {
         username: val.username,
         password: val.password,
@@ -46,25 +54,34 @@ Page({
 
       function saveJson(transJson) {
         wJson = JSON.stringify(transJson)
-        fileSys.writeFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, wJson, "utf8")
-
-        rJson = fileSys.readFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, "utf8")
-        console.log("saveJson")
-        console.log(rJson)
+        wJson = compile(wJson)
+        // fileSys.writeFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, wJson, "utf8")
+        wx.setStorageSync('importance', wJson)
       }
 
       function successTip(strTip) {
         wx.showToast({
           title: strTip,
           icon: 'success',
-          duration: 3000
+          duration: 2000
         });
+      }
+      // 解密函数
+      function uncompile(code) {
+        code = unescape(code);
+        let c = String.fromCharCode(code.charCodeAt(0) - code.length);
+        for (let i = 1; i < code.length; i++) {
+          c += String.fromCharCode(code.charCodeAt(i) - c.charCodeAt(i - 1));
+        }
+        return c;
       }
       console.log("save start")
       console.log(rJson)
       //数据本地化
       try {
-        rJson = fileSys.readFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, "utf8")
+        // rJson = fileSys.readFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, "utf8")
+        rJson = wx.getStorageSync('importance')
+        rJson = uncompile(rJson)
         rJson = JSON.parse(rJson)
         //如果rJson[val.title]存在 && !(val.title == this.data.tit)不是当前title，提示是否覆盖
         console.log(this.data.tit)

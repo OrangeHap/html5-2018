@@ -41,5 +41,8 @@
         "selectedIconPath": "images/mei.png"
       }
     ]
-  }
+  },
+  "navigateToMiniProgramAppIdList": [
+    "wxab55adbdaabf555c"
+  ]
 }

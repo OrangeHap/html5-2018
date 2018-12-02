@@ -7,7 +7,17 @@ Page({
   data: {
 
   },
-
+  toMailbox(){
+    wx.navigateToMiniProgram({
+      appId: 'wxab55adbdaabf555c',
+      path: 'pages/index/index?appId=wxaec41a1e7b910047',
+      envVersion: 'release',
+      success(res) {
+        // 打开成功
+        console.log("succ")
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */

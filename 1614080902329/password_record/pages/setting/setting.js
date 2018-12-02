@@ -9,11 +9,18 @@ Page({
     lock: false
   },
   switchChange: function (e) {
-    const fileSys = wx.getFileSystemManager()
+    // const fileSys = wx.getFileSystemManager()
     if (e.detail.value) {
-      fileSys.unlinkSync(`${wx.env.USER_DATA_PATH}/tip`)
+      // fileSys.unlinkSync(`${wx.env.USER_DATA_PATH}/tip`)
+      try {
+        wx.removeStorageSync('tip')
+        console.log('try')
+      } catch (e) {
+        console.log('cat')
+      }
     } else {
-      fileSys.writeFileSync(`${wx.env.USER_DATA_PATH}/tip`, 'ture', "utf8")
+      // fileSys.writeFileSync(`${wx.env.USER_DATA_PATH}/tip`, 'ture', "utf8")
+      wx.setStorageSync('tip', 'ture')
     }
   },
   switchChangeLock: function (e) {
@@ -43,13 +50,22 @@ Page({
   },
   staShow() {
     //加载状态
-    const fileSys = wx.getFileSystemManager()
+    // const fileSys = wx.getFileSystemManager()
     try {
-      fileSys.readFileSync(`${wx.env.USER_DATA_PATH}/tip`, "utf8")
-      this.setData({
-        sta: false
-      })
+      // fileSys.readFileSync(`${wx.env.USER_DATA_PATH}/tip`, "utf8")
+      let tip = wx.getStorageSync('tip')
+      console.log('s try', tip)
+      if (tip) {
+        this.setData({
+          sta: false
+        })
+      } else {
+        this.setData({
+          sta: true
+        })
+      }
     } catch (e) {
+      console.log('s cat', tip)
       this.setData({
         sta: true
       })

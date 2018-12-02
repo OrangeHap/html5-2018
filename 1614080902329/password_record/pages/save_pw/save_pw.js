@@ -10,7 +10,15 @@ Page({
     joinSumArr: null,
     isNul: true
   },
-  del: function(event){
+  del: function (event) {
+    // 加密函数 
+    function compile(code) {
+      let c = String.fromCharCode(code.charCodeAt(0) + code.length);
+      for (let i = 1; i < code.length; i++) {
+        c += String.fromCharCode(code.charCodeAt(i) + code.charCodeAt(i - 1));
+      }
+      return escape(c);
+    }
     console.log(event)
     let tit = event.currentTarget.id
     //删除提示
@@ -28,17 +36,19 @@ Page({
           console.log("after del")
           console.log(tJson)
           //本地化
-          try{
-            const fileSys = wx.getFileSystemManager()
+          try {
+            // const fileSys = wx.getFileSystemManager()
             let wJson = JSON.stringify(tJson)
-            fileSys.writeFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, wJson, "utf8")
+            wJson = compile(wJson)
+            wx.setStorageSync('importance', wJson)
+            // fileSys.writeFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, wJson, "utf8")
             wx.showToast({
               title: "删除成功",
               icon: 'success',
-              duration: 3000
+              duration: 2000
             });
             this.initMag()
-          }catch(e){
+          } catch (e) {
             console.log(e)
           }
         } else {
@@ -53,9 +63,9 @@ Page({
     let tit = event.currentTarget.id
     let current = this.data.json[tit]
     let tip = null
-    if (current.tip){
+    if (current.tip) {
       tip = '备    注：' + current.tip
-    }else{
+    } else {
       tip = ''
     }
     //弹窗提示
@@ -79,8 +89,8 @@ Page({
           })
           wx.navigateTo({
             url: "/pages/modify_pw/modify_pw",
-            success(res){
-              
+            success(res) {
+
               // try {
               //   wx.setStorageSync('currentInfo', current)
               //   wx.setStorageSync('tit', tit)
@@ -92,11 +102,23 @@ Page({
     });
   },
   //初始化信息，在onLoad,onShow上执行
-  initMag(){
+  initMag() {
+    // 解密函数
+    function uncompile(code) {
+      code = unescape(code);
+      let c = String.fromCharCode(code.charCodeAt(0) - code.length);
+      for (let i = 1; i < code.length; i++) {
+        c += String.fromCharCode(code.charCodeAt(i) - c.charCodeAt(i - 1));
+      }
+      return c;
+    }
     let rJson = null
-    const fileSys = wx.getFileSystemManager()
+    // const fileSys = wx.getFileSystemManager()
     try {//获取数据
-      rJson = fileSys.readFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, "utf8")
+      // rJson = fileSys.readFileSync(`${wx.env.USER_DATA_PATH}/importance.importance`, "utf8")
+      rJson = wx.getStorageSync('importance')
+      console.log('init',rJson)
+      rJson = uncompile(rJson)
       rJson = JSON.parse(rJson)
 
       let keyArr = Object.keys(rJson)
@@ -105,11 +127,11 @@ Page({
         tArr[x] = x
       }
       console.log(keyArr.length)
-      if (!keyArr.length){
+      if (!keyArr.length) {
         this.setData({
           isNul: true
         })
-      }else{
+      } else {
         this.setData({
           isNul: false
         })
